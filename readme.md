@@ -25,20 +25,20 @@ system and you don't know how to adapt the instructions!
 **Recommended**: At this point you should make a backup of the file
 /etc/alternatives/default.plymouth:
 
-> # cp /etc/alternatives/default.plymouth /etc/alternatives/default.plymouth.bak
+`# cp /etc/alternatives/default.plymouth /etc/alternatives/default.plymouth.bak`
 
 2. Remove the symbolic link to the current plymouth theme.
 
-> # rm /etc/alternatives/default.plymouth
+`# rm /etc/alternatives/default.plymouth`
 
 3. In /etc/alternatives/, make a symbolic link to hellonavi.plymouth with the
 following command:
 
-> # ln -s /usr/share/plymouth/themes/hellonavi/hellonavi.plymouth /etc/alternatives/default.plymouth
+`# ln -s /usr/share/plymouth/themes/hellonavi/hellonavi.plymouth /etc/alternatives/default.plymouth`
 
 4. Update your initramfs so it includes the new theme
 
-> # update-initramfs -u
+`# update-initramfs -u`
 
 5. Done. The new theme should show up on boot and shutdown.
 
@@ -63,4 +63,4 @@ from which I took the visual assets used in this theme.
 [1]: [http://askubuntu.com/users/40166/virpara]
 [2]: [http://askubuntu.com/questions/143330/how-can-i-customize-the-ubuntu-boot-up-logo/147769#147769]
 [3]: [http://dreamingusagi.deviantart.com/]
-[4]: [http://dreamingusagi.deviantart.com/art/Lain-Navi-Os-78251341?q=boost%3Apopular%20lain%20navi%20os&qo=0)]
+[4]: [http://dreamingusagi.deviantart.com/art/Lain-Navi-Os-78251341?q=boost%3Apopular%20lain%20navi%20os&qo=0]
