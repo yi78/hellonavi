@@ -1,0 +1,9 @@
+[Plymouth Theme]
+Name=Ubuntu Faded Screen
+Description=Plymouth screen Created by Virpara
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/hellonavi
+ScriptFile=/usr/share/plymouth/themes/hellonavi/hellonavi.script
+

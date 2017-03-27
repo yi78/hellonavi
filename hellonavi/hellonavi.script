@@ -1,0 +1,179 @@
+#
+#          Author : Raphael Campos - https://github.com/yi78
+# Original script : virpara in https://askubuntu.com
+#     Description : Plymouth theme inspired by the japanese
+#                   series Serial Experiments Lain
+#         Version : 0 (2017-03-27)
+#         Website : https://github.com/yi78/hellonavi
+#
+
+Window.SetBackgroundTopColor(0, 0, 0);
+Window.SetBackgroundBottomColor(0, 0, 0);
+
+#--------- Navi sprite --------
+indexnum = 0;
+navi.sprite = SpriteNew();
+while (1){
+    navi.frames[indexnum] = ImageNew("img/navi"+ indexnum +".png");
+
+    # Uncomment the block below if you want to make the image half the size
+    #neww = (navi.frames[indexnum].GetWidth() / 2);
+    #newh = (navi.frames[indexnum].GetHeight() / 2);
+    #resizedimg = navi.frames[indexnum].Scale(neww, newh);
+    #navi.frames[indexnum] = resizedimg;
+
+    if (indexnum >= 9) break;
+    indexnum++;
+}
+frame_count = indexnum;
+
+#----------- Refresh function ----------
+iterations = 0;
+tarpit = 4;
+cur_frame = 1;
+
+fun refresh_callback (){
+    if (status == "normal"){
+
+        navi.sprite.SetImage(navi.frames[cur_frame]);
+        SpriteSetX (navi.sprite, SpriteWindowGetWidth()  / 2 - ImageGetWidth(navi.frames[cur_frame])  / 2);
+        SpriteSetY (navi.sprite, SpriteWindowGetHeight() / 2 - ImageGetHeight(navi.frames[cur_frame]) / 2 );
+    } else {
+        SpriteSetOpacity (navi.sprite, 0);
+    }
+    iterations++;
+
+    if (cur_frame >= frame_count) {
+        cur_frame = 0;
+    } else {
+        if (iterations % tarpit == 0) cur_frame += 1;
+    }
+}
+
+
+if (Plymouth.GetMode() != "suspend" && Plymouth.GetMode() != "resume") {
+    Plymouth.SetRefreshFunction (refresh_callback);
+}
+
+
+#----------------------------------------- Dialog --------------------------------
+
+status = "normal";
+
+fun dialog_setup()
+  {
+    local.box;
+    local.lock;
+    local.entry;
+    local.prompt_sprite;
+    
+    box.image = ImageNew("img/box.png");
+    lock.image = ImageNew("img/lock.png");
+    entry.image = ImageNew("img/entry.png");
+    
+    box.sprite = SpriteNew();
+    box.sprite.SetImage(box.image);
+    box.x = Window.GetX() + Window.GetWidth()  / 2 - box.image.GetWidth()/2;
+    box.y = Window.GetY() + Window.GetHeight() / 2 - box.image.GetHeight()/2;
+    box.z = 10000;
+    box.sprite.SetPosition(box.x, box.y, box.z);
+    
+    lock.sprite = SpriteNew();
+    lock.sprite.SetImage(lock.image);
+    lock.x = box.x + box.image.GetWidth()/2 - (lock.image.GetWidth() + entry.image.GetWidth()) / 2;
+    lock.y = box.y + box.image.GetHeight()/2 - lock.image.GetHeight()/2;
+    lock.z = box.z + 1;
+    lock.sprite.SetPosition(lock.x, lock.y, lock.z);
+    
+    entry.sprite = SpriteNew();
+    entry.sprite.SetImage(entry.image);
+    entry.x = lock.x + lock.image.GetWidth();
+    entry.y = box.y + box.image.GetHeight()/2 - entry.image.GetHeight()/2;
+    entry.z = box.z + 1;
+    entry.sprite.SetPosition(entry.x, entry.y, entry.z);
+
+    prompt_sprite = SpriteNew();
+    prompt_sprite.SetPosition(box.x, box.y - 20, box.z);
+    
+    global.dialog.box = box;
+    global.dialog.lock = lock;
+    global.dialog.entry = entry;
+    global.dialog.bullet_image = ImageNew("img/bullet.png");
+    global.dialog.prompt_sprite = prompt_sprite;
+    dialog_opacity (1);
+  }
+    
+fun dialog_opacity(opacity)
+  {
+    dialog.box.sprite.SetOpacity(opacity);
+    dialog.lock.sprite.SetOpacity(opacity);
+    dialog.entry.sprite.SetOpacity(opacity);
+    dialog.prompt_sprite.SetOpacity(opacity);
+    for (index = 0; dialog.bullet[index]; index++)
+      {
+        dialog.bullet[index].sprite.SetOpacity(opacity);
+      }
+  }
+
+fun display_normal_callback ()
+  {
+    global.status = "normal";
+    if (global.dialog)
+      dialog_opacity (0);
+  }
+
+fun display_password_callback (prompt, bullets)
+  {
+    global.status = "password";
+    if (!global.dialog) 
+        dialog_setup();
+    else 
+        dialog_opacity(1);
+    motif.sprite.SetOpacity(0);
+
+    dialog.prompt_sprite.SetImage(Image.Text(prompt, 1.0, 1.0, 1.0));
+    for (index = 0; dialog.bullet[index] || index < bullets; index++)
+      { 
+
+        if (!dialog.bullet[index])
+          {
+            dialog.bullet[index].sprite = SpriteNew();
+            dialog.bullet[index].sprite.SetImage(dialog.bullet_image);
+            dialog.bullet[index].x = dialog.entry.x + index * dialog.bullet_image.GetWidth();
+            dialog.bullet[index].y = dialog.entry.y + dialog.entry.image.GetHeight() / 2 - dialog.bullet_image.GetHeight() / 2;
+            dialog.bullet[index].z = dialog.entry.z + 1;
+            dialog.bullet[index].sprite.SetPosition(dialog.bullet[index].x, dialog.bullet[index].y, dialog.bullet[index].z);
+          }
+        if (index < bullets)
+          dialog.bullet[index].sprite.SetOpacity(1);
+        else
+          dialog.bullet[index].sprite.SetOpacity(0);
+      }
+  }
+
+fun display_message_callback (prompt)
+  {
+  
+    prompt = Image.Text(prompt,1.0, 1.0, 1.0);
+    sprite_prompt.SetImage(prompt);
+    sprite_prompt.SetPosition(Window.GetX() + (Window.GetWidth() - prompt.GetWidth()) / 2, Window.GetY() + Window.GetHeight() * 0.93, 2);
+  }
+
+# instantiate dialog at startup, to ensure all icons are loaded in memory
+# before initrd is unmounted, in case /usr isn't mounted yet
+dialog_setup(); dialog_opacity(0);
+Plymouth.SetDisplayNormalFunction(display_normal_callback);
+Plymouth.SetDisplayPasswordFunction(display_password_callback);
+Plymouth.SetMessageFunction(display_message_callback);
+
+#----------------------------------------- Quit --------------------------------
+
+fun quit_callback ()
+{
+    if (Plymouth.GetMode() == "shutdown") {
+        motif.sprite.SetOpacity(0);
+    }
+}
+
+Plymouth.SetQuitFunction(quit_callback);
+
