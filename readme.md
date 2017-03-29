@@ -11,14 +11,14 @@ replaces replace the default Plymouth theme.
 Installation
 ------------
 
-### Important note
+### Important note ###
 
 The following instructions were tested in Kubuntu 16.10. The steps you'll need
 to take to install this software in your system may be different - don't make
 changes to your system if you can't reproduce any of the steps below in your
 system and you don't know how to adapt the instructions!
 
-### Instructions
+### Instructions ###
 
 1. Copy the hellonavi folder to /usr/share/plymout/themes
 
@@ -42,13 +42,21 @@ following command:
 
 5. Done. The new theme should show up on boot and shutdown.
 
-### Additional notes
+### Additional notes ###
+
+The test script included was only tested under Kubuntu 16.10 and will probably not work in most
+other flavors of Linux. It's probably best to manually adapt it to your system before running.
 
 The Plymouth's theme folder may be located in
 /lib/plymouth/themes in some distributions
 
 default.plymouth may be located inside of the
 themes folder in some distributions
+
+Imagemagick can be used to convert GIF files into PNG files numbered upwards
+from 0. The command I use is below.
+
+`$ convert -coalesce input_file.gif prefix%01d.png`
 
 
 Thanks/Credits
