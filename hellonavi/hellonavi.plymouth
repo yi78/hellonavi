@@ -1,6 +1,6 @@
 [Plymouth Theme]
-Name=Ubuntu Faded Screen
-Description=Plymouth screen Created by Virpara
+Name=Hello Navi
+Description=Plymouth theme by Raphael Campos <https://github.com/yi78>
 ModuleName=script
 
 [script]
